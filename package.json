@@ -1,0 +1,31 @@
+{
+  "name": "the-react-table-component",
+  "version": "1.0.0",
+  "description": "React table component",
+  "main": "src/index.tsx",
+  "scripts": {
+    "start": "./node_modules/.bin/webpack-dev-server",
+    "build": "./node_modules/.bin/webpack --config webpack.config.prod.js --progress --profile --bail",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kirill.komarov@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^15.0.4",
+    "@types/react-dom": "^0.14.21",
+    "awesome-typescript-loader": "^3.0.0-beta.18",
+    "css-loader": "^0.26.1",
+    "less": "^2.7.2",
+    "less-loader": "^2.2.3",
+    "source-map-loader": "^0.1.6",
+    "style-loader": "^0.13.1",
+    "typescript": "^2.1.5",
+    "webpack": "^1.14.0",
+    "webpack-dev-server": "^1.16.2"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-lazy-render": "^0.3.0"
+  }
+}

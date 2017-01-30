@@ -1,0 +1,25 @@
+.TableView {
+  overflow-x: scroll;
+  height: 100%;
+
+  table {
+    height: 100%;
+    margin: 0;
+  };
+
+  thead, tbody, tfoot {
+    display: block;
+  }
+
+  tbody {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 0;
+  }
+
+  tr.selected {
+    background-color: #d9edf7 !important;
+  }
+
+}
+

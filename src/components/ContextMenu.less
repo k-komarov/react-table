@@ -1,0 +1,23 @@
+.ContextMenu {
+  position: absolute;
+  display: inline-block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #000;
+  z-index: 9999;
+
+  li:not(:last-child) {
+    border-bottom: 1px solid #000;
+  }
+}
+
+.ContextMenuItem {
+  padding: 5px 15px;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+.ContextMenuItem:hover {
+  background-color: #e5e5e5;
+}
