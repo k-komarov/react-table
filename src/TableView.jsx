@@ -115,11 +115,19 @@ var TableView = (function (_super) {
             }
         });
     };
+    TableView.prototype.clearSelection = function () {
+        this.setState({
+            selectedRows: []
+        });
+    };
     TableView.prototype.render = function () {
         var _this = this;
         var contextMenu;
         if (this.state.showContextMenu && React.isValidElement(this.props.contextMenu)) {
-            var newContextMenu = React.cloneElement(this.props.contextMenu, { rows: this.state.selectedRows });
+            var newContextMenu = React.cloneElement(this.props.contextMenu, {
+                clearSelection: this.clearSelection.bind(this),
+                rows: this.state.selectedRows
+            });
             contextMenu = <div style={{
                 position: "fixed",
                 width: "100vw",

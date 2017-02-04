@@ -14,7 +14,10 @@ for (var i = 0; i < 10; i++) {
 }
 var MyContextMenu = function (props) {
     return <ContextMenu_1.ContextMenu>
-        <ContextMenu_1.ContextMenuItem onClick={function () { console.log("Bearbaiten", props.rows); }}>Bearbeiten ({props.rows.length})</ContextMenu_1.ContextMenuItem>
+        <ContextMenu_1.ContextMenuItem onClick={function () {
+        console.log("Bearbaiten", props.rows);
+        props.clearSelection();
+    }}>Bearbeiten ({props.rows.length})</ContextMenu_1.ContextMenuItem>
         <ContextMenu_1.ContextMenuItem onClick={function () { console.log("Löschen", props.rows); }}>Löschen ({props.rows.length})</ContextMenu_1.ContextMenuItem>
     </ContextMenu_1.ContextMenu>;
 };

@@ -13,10 +13,13 @@ for (let i = 0; i < 10; i++) {
     });
 }
 
-const MyContextMenu = (props: {rows?: any}) => {
+const MyContextMenu = (props: {clearSelection?: () => void, rows?: any}) => {
     return <ContextMenu>
         <ContextMenuItem
-            onClick={() => {console.log("Bearbaiten", props.rows)}}>Bearbeiten ({props.rows.length})</ContextMenuItem>
+            onClick={() => {
+                console.log("Bearbaiten", props.rows);
+                props.clearSelection();
+            }}>Bearbeiten ({props.rows.length})</ContextMenuItem>
         <ContextMenuItem
             onClick={() => {console.log("Löschen", props.rows)}}>Löschen ({props.rows.length})</ContextMenuItem>
     </ContextMenu>

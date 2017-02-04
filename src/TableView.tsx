@@ -13,7 +13,7 @@ export interface TableViewProps<T> {
     onRowSelection?: (rowIndex: number) => void;
     onRowLeftMouseClick?: (rowIndex: number) => void;
     onRowRightMouseClick?: (rowIndex: number) => void;
-    contextMenu?: React.ReactElement<{rows: any}>;
+    contextMenu?: React.ReactElement<{clearSelection: () => void, rows: any}>;
 }
 
 export class TableView<T> extends React.Component<TableViewProps<T>, any> {
@@ -138,10 +138,19 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
         });
     }
 
+    private clearSelection() {
+        this.setState({
+            selectedRows: []
+        });
+    }
+
     render() {
         let contextMenu;
         if (this.state.showContextMenu && React.isValidElement(this.props.contextMenu)) {
-            const newContextMenu = React.cloneElement(this.props.contextMenu, {rows: this.state.selectedRows});
+            const newContextMenu = React.cloneElement(this.props.contextMenu, {
+                clearSelection: this.clearSelection.bind(this),
+                rows: this.state.selectedRows
+            });
             contextMenu = <div style={{
                         position: "fixed",
                         width: "100vw",
