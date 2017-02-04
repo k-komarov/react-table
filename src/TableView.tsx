@@ -1,6 +1,8 @@
 import * as React from "react";
 import {IColumn} from "./Interfaces";
 import "./TableView.less";
+import {HeaderCell} from "./HeaderCell";
+import {SortingDirection} from "./SortingDirection";
 
 export interface TableViewProps<T> {
     columns: IColumn<T>[];
@@ -19,11 +21,16 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
     constructor(props: TableViewProps<T>, context: any) {
         super(props, context);
         this.state = {
+            items: [...props.items],
             selectedRows: props.selectedRows || [],
             showContextMenu: false,
             contextMenuPosition: {
                 top: 0,
                 left: 0
+            },
+            sorting: {
+                column: null,
+                dir: SortingDirection.NO
             }
         };
     }
@@ -106,6 +113,28 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
         })
     }
 
+    private handleColumnSort(column: IColumn<any>) {
+        let sortDirection = this.state.sorting.dir;
+        sortDirection = sortDirection === SortingDirection.ASC ? SortingDirection.DESC : ++sortDirection;
+        let items;
+        if (sortDirection === SortingDirection.NO) {
+            items = [...this.props.items];
+            column = null;
+        }
+        else {
+            items = [...this.state.items];
+            items.sort(column.sort.bind(null, sortDirection, column.value));
+        }
+
+        this.setState({
+            items: items,
+            sorting: {
+                column: column,
+                dir: sortDirection
+            }
+        });
+    }
+
     render() {
         let contextMenu;
         if (this.state.showContextMenu && React.isValidElement(this.props.contextMenu)) {
@@ -132,13 +161,22 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
                     <thead ref="header">
                     <tr>
                         {
-                            this.props.columns.map((column, i) => <th key={i}>{column.header()}</th>)
+                            this.props.columns.map((column, i) => {
+                                let sortDirection = this.state.sorting.column === column ? this.state.sorting.dir : null;
+                                return (
+                                    <th key={i} onClick={column.sort ? this.handleColumnSort.bind(this, column) : null}>
+                                        <HeaderCell sortDirection={sortDirection}>
+                                            {column.header()}
+                                        </HeaderCell>
+                                    </th>
+                                );
+                            })
                         }
                     </tr>
                     </thead>
                     <tbody ref="rows">
                     {
-                        this.props.items.map((item: T, rowIndex) => {
+                        this.state.items.map((item: T, rowIndex: number) => {
                             return (
                                 <tr key={rowIndex}
                                     className={this.state.selectedRows.indexOf(rowIndex) !== -1 ? "selected" : ""}

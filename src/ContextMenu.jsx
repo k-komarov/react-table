@@ -9,17 +9,13 @@ require("./ContextMenu.less");
 var ContextMenu = (function (_super) {
     __extends(ContextMenu, _super);
     function ContextMenu(props, context) {
-        var _this = _super.call(this, props, context) || this;
-        _this.state = {
-            active: false
-        };
-        return _this;
+        return _super.call(this, props, context) || this;
     }
     ContextMenu.prototype.render = function () {
-        if (!this.state.active)
-            return null;
         var items = React.Children.map(this.props.children, function (child, index) {
-            return <li key={index}>{child}</li>;
+            return <li key={index}>
+                {child}
+            </li>;
         });
         return (<ul className="ContextMenu">
                 {items}
@@ -34,7 +30,9 @@ var ContextMenuItem = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ContextMenuItem.prototype.render = function () {
-        return (<div className={"ContextMenuItem " + this.props.className}>{this.props.children}</div>);
+        return (<div className={"ContextMenuItem " + this.props.className} onClick={this.props.onClick.bind(this, this.props.data)}>
+                {this.props.children}
+            </div>);
     };
     return ContextMenuItem;
 }(React.Component));

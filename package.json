@@ -1,8 +1,8 @@
 {
-  "name": "the-react-table-component",
+  "name": "kk-react-table",
   "version": "1.0.0",
   "description": "React table component",
-  "main": "src/index.tsx",
+  "main": "lib/index.js",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server",
     "build": "./node_modules/.bin/webpack --config webpack.config.prod.js --progress --profile --bail",
