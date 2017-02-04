@@ -123,7 +123,10 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
         }
         else {
             items = [...this.state.items];
-            items.sort(column.sort.bind(null, sortDirection, column.value));
+            const sortFunc = column.sortFunc
+                ? column.sortFunc.bind(null, sortDirection, column.value)
+                : ((a: T, b: T) => (sortDirection) * (column.value(a) > column.value(b) ? 1 : (column.value(a) < column.value(b) ? -1 : 0)));
+            items.sort(sortFunc);
         }
 
         this.setState({
@@ -164,7 +167,8 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
                             this.props.columns.map((column, i) => {
                                 let sortDirection = this.state.sorting.column === column ? this.state.sorting.dir : null;
                                 return (
-                                    <th key={i} onClick={column.sort ? this.handleColumnSort.bind(this, column) : null}>
+                                    <th key={i}
+                                        onClick={column.sorting ? this.handleColumnSort.bind(this, column) : null}>
                                         <HeaderCell sortDirection={sortDirection}>
                                             {column.header()}
                                         </HeaderCell>
@@ -203,7 +207,7 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
                     <tfoot ref="footer">
                     <tr>
                         {
-                            this.props.columns.map((column, i) => <th key={i}>{column.header()}</th>)
+                            this.props.columns.map((column, i) => <th key={i}>{column.footer()}</th>)
                         }
                     </tr>
                     </tfoot>

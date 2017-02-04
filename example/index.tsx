@@ -31,7 +31,8 @@ ReactDOM.render(
                         footer: () => "AA",
                         value: (item: any) => item.a,
                         width: "300px",
-                        sort: (sortDirection, valueFunc, a: any, b: any) => {
+                        sorting: true,
+                        sortFunc: (sortDirection, valueFunc, a: any, b: any) => {
                             const valueA = valueFunc(a);
                             const valueB = valueFunc(b);
                             return (sortDirection) * (valueA > valueB ? 1 : (valueA < valueB ? -1 : 0));
@@ -42,11 +43,7 @@ ReactDOM.render(
                         footer: () => "BB",
                         value: (item: any) => item.b,
                         width: "400px",
-                        sort: (sortDirection, valueFunc, a: any, b: any) => {
-                            const valueA = valueFunc(a);
-                            const valueB = valueFunc(b);
-                            return (sortDirection) * (valueA > valueB ? 1 : (valueA < valueB ? -1 : 0));
-                        }
+                        sorting: true
                     },
                     {
                         header: () => "C",

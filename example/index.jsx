@@ -26,7 +26,8 @@ ReactDOM.render(<div style={{ height: "100%" }}>
         footer: function () { return "AA"; },
         value: function (item) { return item.a; },
         width: "300px",
-        sort: function (sortDirection, valueFunc, a, b) {
+        sorting: true,
+        sortFunc: function (sortDirection, valueFunc, a, b) {
             var valueA = valueFunc(a);
             var valueB = valueFunc(b);
             return (sortDirection) * (valueA > valueB ? 1 : (valueA < valueB ? -1 : 0));
@@ -37,11 +38,7 @@ ReactDOM.render(<div style={{ height: "100%" }}>
         footer: function () { return "BB"; },
         value: function (item) { return item.b; },
         width: "400px",
-        sort: function (sortDirection, valueFunc, a, b) {
-            var valueA = valueFunc(a);
-            var valueB = valueFunc(b);
-            return (sortDirection) * (valueA > valueB ? 1 : (valueA < valueB ? -1 : 0));
-        }
+        sorting: true
     },
     {
         header: function () { return "C"; },

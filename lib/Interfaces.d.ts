@@ -3,6 +3,5 @@ export interface IColumn<T> {
     footer: () => string;
     value: (item: T) => any;
     width?: string;
-    sorting?: boolean;
-    sortFunc?: (sortDirection: number, valueFunc: (v: any) => any, a: any, b: any) => number;
+    sort?: (sortDirection: number, valueFunc: (v: any) => any, a: any, b: any) => number;
 }
