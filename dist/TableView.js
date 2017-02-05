@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var React = require("react");
 require("./TableView.less");
-var HeaderCell_1 = require("../lib/HeaderCell");
+var HeaderCell_1 = require("./HeaderCell");
 var SortingDirection_1 = require("./SortingDirection");
 var TableView = (function (_super) {
     __extends(TableView, _super);
@@ -15,6 +15,7 @@ var TableView = (function (_super) {
         _this.state = {
             items: props.items.slice(),
             selectedRows: props.selectedRows || [],
+            expandedRows: [],
             showContextMenu: false,
             contextMenuPosition: {
                 top: 0,
@@ -102,7 +103,11 @@ var TableView = (function (_super) {
         }
         else {
             items = this.state.items.slice();
-            items.sort(column.sort.bind(null, sortDirection, column.value));
+            var sortFunc = column.sortFunc
+                ? column.sortFunc.bind(null, sortDirection, column.value)
+                : (function (a, b) { return (sortDirection) * (column.value(a.entity) > column.value(b.entity)
+                    ? 1 : (column.value(a.entity) < column.value(b.entity) ? -1 : 0)); });
+            items.sort(sortFunc);
         }
         this.setState({
             items: items,
@@ -112,11 +117,28 @@ var TableView = (function (_super) {
             }
         });
     };
+    TableView.prototype.clearSelection = function () {
+        this.setState({
+            selectedRows: []
+        });
+    };
+    TableView.prototype.handleRowExpand = function (rowIndex, e) {
+        e.stopPropagation(); // not to fire Selection
+        var indexInExpandedRows = this.state.expandedRows.indexOf(rowIndex);
+        var expandedRows = indexInExpandedRows !== -1
+            ? this.state.expandedRows.slice(0, indexInExpandedRows).concat(this.state.expandedRows.slice(indexInExpandedRows + 1)) : this.state.expandedRows.concat([rowIndex]);
+        this.setState({
+            expandedRows: expandedRows
+        });
+    };
     TableView.prototype.render = function () {
         var _this = this;
         var contextMenu;
         if (this.state.showContextMenu && React.isValidElement(this.props.contextMenu)) {
-            var newContextMenu = React.cloneElement(this.props.contextMenu, { rows: this.state.selectedRows });
+            var newContextMenu = React.cloneElement(this.props.contextMenu, {
+                clearSelection: this.clearSelection.bind(this),
+                rows: this.state.selectedRows
+            });
             contextMenu = React.createElement("div", { style: {
                     position: "fixed",
                     width: "100vw",
@@ -134,21 +156,33 @@ var TableView = (function (_super) {
             React.createElement("table", { className: this.props.tableClassName || "" },
                 React.createElement("thead", { ref: "header" },
                     React.createElement("tr", null, this.props.columns.map(function (column, i) {
-                        var sortDirection = _this.state.sorting.column === column ? _this.state.sort.dir : null;
-                        return (React.createElement("th", { key: i, onClick: column.sort ? _this.handleColumnSort.bind(_this, column) : null },
+                        var sortDirection = _this.state.sorting.column === column ? _this.state.sorting.dir : null;
+                        return (React.createElement("th", { key: i, onClick: column.sorting ? _this.handleColumnSort.bind(_this, column) : null },
                             React.createElement(HeaderCell_1.HeaderCell, { sortDirection: sortDirection }, column.header())));
                     }))),
-                React.createElement("tbody", { ref: "rows" }, this.state.items.map(function (item, rowIndex) {
-                    return (React.createElement("tr", { key: rowIndex, className: _this.state.selectedRows.indexOf(rowIndex) !== -1 ? "selected" : "", onClick: _this.handleRowClick.bind(_this, rowIndex), onContextMenu: _this.handleRowContextMenu.bind(_this, rowIndex) }, _this.props.columns.map(function (column, columnIndex) {
+                React.createElement("tbody", { ref: "rows" }, this.state.items.map(function (tableItem, rowIndex) {
+                    var children = tableItem.children.map(function (child, childIndex) {
+                        return (React.createElement("tr", { key: childIndex, style: {
+                                display: _this.state.expandedRows.indexOf(rowIndex) !== -1 ? "" : "none"
+                            } }, _this.props.columns.map(function (column, columnIndex) {
+                            return (React.createElement("td", { key: columnIndex }, column.value(child)));
+                        })));
+                    });
+                    var tr = (React.createElement("tr", { key: rowIndex, className: _this.state.selectedRows.indexOf(rowIndex) !== -1 ? "selected" : "", onClick: _this.handleRowClick.bind(_this, rowIndex), onContextMenu: _this.handleRowContextMenu.bind(_this, rowIndex) }, _this.props.columns.map(function (column, columnIndex) {
                         var cellWidth = column.width || "auto";
                         return React.createElement("td", { key: columnIndex, style: {
                                 minWidth: cellWidth,
                                 maxWidth: cellWidth
-                            } }, column.value(item));
+                            } },
+                            columnIndex === 0 && children.length
+                                ? React.createElement("div", { onClick: _this.handleRowExpand.bind(_this, rowIndex), className: "treeTrigger" }, _this.state.expandedRows.indexOf(rowIndex) !== -1 ? "-" : "+")
+                                : null,
+                            column.value(tableItem.entity));
                     })));
+                    return [tr, children].map(function (row, index) { return row; }); // Haha!!!
                 })),
                 React.createElement("tfoot", { ref: "footer" },
-                    React.createElement("tr", null, this.props.columns.map(function (column, i) { return React.createElement("th", { key: i }, column.header()); }))))));
+                    React.createElement("tr", null, this.props.columns.map(function (column, i) { return React.createElement("th", { key: i }, column.footer()); }))))));
     };
     return TableView;
 }(React.Component));

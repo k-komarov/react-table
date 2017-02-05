@@ -1,10 +1,10 @@
 /// <reference types="react" />
 import * as React from "react";
-import { IColumn } from "./Interfaces";
+import { IColumn, TableItem } from "./Interfaces";
 import "./TableView.less";
-export interface TableViewProps<T> {
-    columns: IColumn<T>[];
-    items: T[];
+export interface TableViewProps<E> {
+    columns: IColumn<E, any>[];
+    items: TableItem<E>[];
     containerClassName?: string;
     tableClassName?: string;
     selectedRows?: number[];
@@ -12,11 +12,12 @@ export interface TableViewProps<T> {
     onRowLeftMouseClick?: (rowIndex: number) => void;
     onRowRightMouseClick?: (rowIndex: number) => void;
     contextMenu?: React.ReactElement<{
+        clearSelection: () => void;
         rows: any;
     }>;
 }
-export declare class TableView<T> extends React.Component<TableViewProps<T>, any> {
-    constructor(props: TableViewProps<T>, context: any);
+export declare class TableView<E> extends React.Component<TableViewProps<E>, any> {
+    constructor(props: TableViewProps<E>, context: any);
     componentDidMount(): void;
     private recalculateWidthsAndHeight();
     private processRowSelection(rowIndex);
@@ -24,5 +25,7 @@ export declare class TableView<T> extends React.Component<TableViewProps<T>, any
     private handleRowContextMenu(rowIndex, e);
     private handleCloseContextMenu(e);
     private handleColumnSort(column);
+    private clearSelection();
+    private handleRowExpand(rowIndex, e);
     render(): JSX.Element;
 }
