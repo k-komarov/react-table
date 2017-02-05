@@ -52,6 +52,11 @@ ReactDOM.render(
     <div style={{height: "100%"}}>
         <Table columns={[
                     {
+                        header: () => null,
+                        footer: () => null,
+                        value: () => null
+                    },
+                    {
                         header: () => "A",
                         footer: () => "AA",
                         value: (item: any) => item.a,

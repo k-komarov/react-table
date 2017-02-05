@@ -39,6 +39,11 @@ var Table = function (props, state) { return new TableView_1.TableView(props, st
 ReactDOM.render(<div style={{ height: "100%" }}>
         <Table columns={[
     {
+        header: function () { return null; },
+        footer: function () { return null; },
+        value: function () { return null; }
+    },
+    {
         header: function () { return "A"; },
         footer: function () { return "AA"; },
         value: function (item) { return item.a; },

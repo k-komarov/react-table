@@ -213,9 +213,11 @@ export class TableView<E> extends React.Component<TableViewProps<E>, any> {
                                     }}>
                                         {
                                             this.props.columns.map((column, columnIndex) => {
-                                                return <td key={columnIndex}>
-                                                    {column.value(child)}
-                                                </td>;
+                                                return (
+                                                    <td key={columnIndex}>
+                                                        {column.value(child)}
+                                                    </td>
+                                                );
                                             })
                                         }
                                     </tr>
@@ -235,9 +237,13 @@ export class TableView<E> extends React.Component<TableViewProps<E>, any> {
                                                            minWidth: cellWidth,
                                                            maxWidth: cellWidth
                                                        }}>
-                                                {columnIndex === 0 && children.length
-                                                    ? <span onClick={this.handleRowExpand.bind(this, rowIndex)}>+</span>
-                                                    : null
+                                                {
+                                                    columnIndex === 0 && children.length
+                                                        ? <div onClick={this.handleRowExpand.bind(this, rowIndex)}
+                                                               className="treeTrigger">
+                                                            {this.state.expandedRows.indexOf(rowIndex) !== -1 ? "-" : "+"}
+                                                        </div>
+                                                        : null
                                                 }
                                                 {column.value(tableItem.entity)}
                                             </td>;

@@ -176,9 +176,9 @@ var TableView = (function (_super) {
                     display: _this.state.expandedRows.indexOf(rowIndex) !== -1 ? "" : "none"
                 }}>
                                         {_this.props.columns.map(function (column, columnIndex) {
-                    return <td key={columnIndex}>
-                                                    {column.value(child)}
-                                                </td>;
+                    return (<td key={columnIndex}>
+                                                        {column.value(child)}
+                                                    </td>);
                 })}
                                     </tr>);
             });
@@ -190,7 +190,9 @@ var TableView = (function (_super) {
                     maxWidth: cellWidth
                 }}>
                                                 {columnIndex === 0 && children.length
-                    ? <span onClick={_this.handleRowExpand.bind(_this, rowIndex)}>+</span>
+                    ? <div onClick={_this.handleRowExpand.bind(_this, rowIndex)} className="treeTrigger">
+                                                            {_this.state.expandedRows.indexOf(rowIndex) !== -1 ? "-" : "+"}
+                                                        </div>
                     : null}
                                                 {column.value(tableItem.entity)}
                                             </td>;
