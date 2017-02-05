@@ -1,12 +1,12 @@
 import * as React from "react";
-import {IColumn} from "./Interfaces";
+import {IColumn, TableItem} from "./Interfaces";
 import "./TableView.less";
 import {HeaderCell} from "./HeaderCell";
 import {SortingDirection} from "./SortingDirection";
 
-export interface TableViewProps<T> {
-    columns: IColumn<T>[];
-    items: T[];
+export interface TableViewProps<E> {
+    columns: IColumn<E, any>[];
+    items: TableItem<E>[];
     containerClassName?: string;
     tableClassName?: string;
     selectedRows?: number[];
@@ -16,13 +16,14 @@ export interface TableViewProps<T> {
     contextMenu?: React.ReactElement<{clearSelection: () => void, rows: any}>;
 }
 
-export class TableView<T> extends React.Component<TableViewProps<T>, any> {
+export class TableView<E> extends React.Component<TableViewProps<E>, any> {
 
-    constructor(props: TableViewProps<T>, context: any) {
+    constructor(props: TableViewProps<E>, context: any) {
         super(props, context);
         this.state = {
             items: [...props.items],
             selectedRows: props.selectedRows || [],
+            expandedRows: [],
             showContextMenu: false,
             contextMenuPosition: {
                 top: 0,
@@ -113,7 +114,7 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
         })
     }
 
-    private handleColumnSort(column: IColumn<any>) {
+    private handleColumnSort(column: IColumn<E, any>) {
         let sortDirection = this.state.sorting.dir;
         sortDirection = sortDirection === SortingDirection.ASC ? SortingDirection.DESC : ++sortDirection;
         let items;
@@ -125,7 +126,8 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
             items = [...this.state.items];
             const sortFunc = column.sortFunc
                 ? column.sortFunc.bind(null, sortDirection, column.value)
-                : ((a: T, b: T) => (sortDirection) * (column.value(a) > column.value(b) ? 1 : (column.value(a) < column.value(b) ? -1 : 0)));
+                : ((a: TableItem<E>, b: TableItem<E>) => (sortDirection) * (column.value(a.entity) > column.value(b.entity)
+                    ? 1 : (column.value(a.entity) < column.value(b.entity) ? -1 : 0)));
             items.sort(sortFunc);
         }
 
@@ -142,6 +144,20 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
         this.setState({
             selectedRows: []
         });
+    }
+
+    private handleRowExpand(rowIndex: number, e: MouseEvent) {
+        e.stopPropagation();
+        const indexInExpandedRows = this.state.expandedRows.indexOf(rowIndex);
+        const expandedRows: number[] = indexInExpandedRows !== -1
+            ? [
+                ...this.state.expandedRows.slice(0, indexInExpandedRows),
+                ...this.state.expandedRows.slice(indexInExpandedRows + 1)
+            ]
+            : [...this.state.expandedRows, rowIndex];
+        this.setState({
+            expandedRows: expandedRows
+        })
     }
 
     render() {
@@ -189,8 +205,28 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
                     </thead>
                     <tbody ref="rows">
                     {
-                        this.state.items.map((item: T, rowIndex: number) => {
-                            return (
+                        this.state.items.map((tableItem: TableItem<E>, rowIndex: number) => {
+                            const children = tableItem.children.map((child: E, childIndex) => {
+                                return (
+                                    <tr key={childIndex} style={{
+                                        display: this.state.expandedRows.indexOf(rowIndex) !== -1 ? "" : "none"
+                                    }}>
+                                        {
+                                            this.props.columns.map((column, columnIndex) => {
+                                                const cellWidth = column.width || "auto";
+                                                return <td key={columnIndex}
+                                                           style={{
+                                                           minWidth: cellWidth,
+                                                           maxWidth: cellWidth
+                                                       }}>
+                                                    {column.value(child)}
+                                                </td>;
+                                            })
+                                        }
+                                    </tr>
+                                );
+                            });
+                            const tr = (
                                 <tr key={rowIndex}
                                     className={this.state.selectedRows.indexOf(rowIndex) !== -1 ? "selected" : ""}
                                     onClick={this.handleRowClick.bind(this, rowIndex)}
@@ -204,12 +240,13 @@ export class TableView<T> extends React.Component<TableViewProps<T>, any> {
                                                            minWidth: cellWidth,
                                                            maxWidth: cellWidth
                                                        }}>
-                                                {column.value(item)}
+                                                {columnIndex===0 && children.length ? <span onClick={this.handleRowExpand.bind(this, rowIndex)}>+</span> : null} {column.value(tableItem.entity)}
                                             </td>;
                                         })
                                     }
                                 </tr>
                             );
+                            return [tr, children].map((row, index) => row); // Haha!!!
                         })
                     }
                     </tbody>

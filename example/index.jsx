@@ -4,14 +4,28 @@ var ReactDOM = require("react-dom");
 var TableView_1 = require("../src/TableView");
 require("./index.less");
 var ContextMenu_1 = require("../src/ContextMenu");
+var Interfaces_1 = require("../src/Interfaces");
+var Item = (function () {
+    function Item(a, b, c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+    return Item;
+}());
 var items = [];
-for (var i = 0; i < 10; i++) {
-    items.push({
-        a: i + "(props: TableViewProps<any>, state: any)",
-        b: +(Math.random() * 100 + 1).toFixed(2),
-        c: "const Table = (props: TableViewProps<any>, state: any) => new TableView<any>(props, state);"
-    });
+for (var i = 0; i < 1000; i++) {
+    items.push(new Item(i + "(props: TableViewProps<any>, state: any)", +(Math.random() * 100 + 1).toFixed(2), "const Table = (props: TableViewProps<any>, state: any) => new TableView<any>(props, state);"));
 }
+var tableItems = [];
+items.forEach(function (item, index) {
+    var tableItem = new Interfaces_1.TableItem(item);
+    if (index % 4 === 0) {
+        tableItem.children.push(new Item(1, 2, 3));
+        tableItem.children.push(new Item(4, 5, 6));
+    }
+    tableItems.push(tableItem);
+});
 var MyContextMenu = function (props) {
     return <ContextMenu_1.ContextMenu>
         <ContextMenu_1.ContextMenuItem onClick={function () {
@@ -29,12 +43,7 @@ ReactDOM.render(<div style={{ height: "100%" }}>
         footer: function () { return "AA"; },
         value: function (item) { return item.a; },
         width: "300px",
-        sorting: true,
-        sortFunc: function (sortDirection, valueFunc, a, b) {
-            var valueA = valueFunc(a);
-            var valueB = valueFunc(b);
-            return (sortDirection) * (valueA > valueB ? 1 : (valueA < valueB ? -1 : 0));
-        }
+        sorting: true
     },
     {
         header: function () { return "B"; },
@@ -49,5 +58,5 @@ ReactDOM.render(<div style={{ height: "100%" }}>
         value: function (item) { return item.c; },
         width: "500px"
     }
-]} items={items} tableClassName="table table-striped table-bordered" contextMenu={<MyContextMenu />}/>
+]} items={tableItems} tableClassName="table table-striped table-bordered" contextMenu={<MyContextMenu />}/>
     </div>, document.getElementById("example"));

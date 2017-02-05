@@ -3,15 +3,37 @@ import * as ReactDOM from "react-dom";
 import {TableViewProps, TableView} from "../src/TableView";
 import "./index.less";
 import {ContextMenu, ContextMenuItem} from "../src/ContextMenu";
+import {TableItem} from "../src/Interfaces";
 
-const items = [];
-for (let i = 0; i < 10; i++) {
-    items.push({
-        a: i + "(props: TableViewProps<any>, state: any)",
-        b: +(Math.random() * 100 + 1).toFixed(2),
-        c: "const Table = (props: TableViewProps<any>, state: any) => new TableView<any>(props, state);"
-    });
+class Item {
+    readonly a: any;
+    readonly b: any;
+    readonly c: any;
+
+    constructor(a: any, b: any, c: any) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
 }
+const items: Item[] = [];
+for (let i = 0; i < 1000; i++) {
+    items.push(new Item(
+        i + "(props: TableViewProps<any>, state: any)",
+        +(Math.random() * 100 + 1).toFixed(2),
+        "const Table = (props: TableViewProps<any>, state: any) => new TableView<any>(props, state);"
+    ));
+}
+
+const tableItems: TableItem<Item>[] = [];
+items.forEach((item: Item, index: number) => {
+    const tableItem = new TableItem<Item>(item);
+    if (index % 4 === 0) {
+        tableItem.children.push(new Item(1, 2, 3));
+        tableItem.children.push(new Item(4, 5, 6));
+    }
+    tableItems.push(tableItem);
+});
 
 const MyContextMenu = (props: {clearSelection?: () => void, rows?: any}) => {
     return <ContextMenu>
@@ -25,7 +47,7 @@ const MyContextMenu = (props: {clearSelection?: () => void, rows?: any}) => {
     </ContextMenu>
 };
 
-const Table = (props: TableViewProps<any>, state: any) => new TableView<any>(props, state);
+const Table = (props: TableViewProps<any>, state: any) => new TableView<Item>(props, state);
 ReactDOM.render(
     <div style={{height: "100%"}}>
         <Table columns={[
@@ -34,12 +56,7 @@ ReactDOM.render(
                         footer: () => "AA",
                         value: (item: any) => item.a,
                         width: "300px",
-                        sorting: true,
-                        sortFunc: (sortDirection, valueFunc, a: any, b: any) => {
-                            const valueA = valueFunc(a);
-                            const valueB = valueFunc(b);
-                            return (sortDirection) * (valueA > valueB ? 1 : (valueA < valueB ? -1 : 0));
-                        }
+                        sorting: true
                     },
                     {
                         header: () => "B",
@@ -55,7 +72,7 @@ ReactDOM.render(
                         width: "500px"
                     }
                 ]}
-               items={items}
+               items={tableItems}
                tableClassName="table table-striped table-bordered"
                contextMenu={<MyContextMenu/>}
         />

@@ -15,6 +15,7 @@ var TableView = (function (_super) {
         _this.state = {
             items: props.items.slice(),
             selectedRows: props.selectedRows || [],
+            expandedRows: [],
             showContextMenu: false,
             contextMenuPosition: {
                 top: 0,
@@ -104,7 +105,8 @@ var TableView = (function (_super) {
             items = this.state.items.slice();
             var sortFunc = column.sortFunc
                 ? column.sortFunc.bind(null, sortDirection, column.value)
-                : (function (a, b) { return (sortDirection) * (column.value(a) > column.value(b) ? 1 : (column.value(a) < column.value(b) ? -1 : 0)); });
+                : (function (a, b) { return (sortDirection) * (column.value(a.entity) > column.value(b.entity)
+                    ? 1 : (column.value(a.entity) < column.value(b.entity) ? -1 : 0)); });
             items.sort(sortFunc);
         }
         this.setState({
@@ -118,6 +120,15 @@ var TableView = (function (_super) {
     TableView.prototype.clearSelection = function () {
         this.setState({
             selectedRows: []
+        });
+    };
+    TableView.prototype.handleRowExpand = function (rowIndex, e) {
+        e.stopPropagation();
+        var indexInExpandedRows = this.state.expandedRows.indexOf(rowIndex);
+        var expandedRows = indexInExpandedRows !== -1
+            ? this.state.expandedRows.slice(0, indexInExpandedRows).concat(this.state.expandedRows.slice(indexInExpandedRows + 1)) : this.state.expandedRows.concat([rowIndex]);
+        this.setState({
+            expandedRows: expandedRows
         });
     };
     TableView.prototype.render = function () {
@@ -159,18 +170,34 @@ var TableView = (function (_super) {
                     </tr>
                     </thead>
                     <tbody ref="rows">
-                    {this.state.items.map(function (item, rowIndex) {
-            return (<tr key={rowIndex} className={_this.state.selectedRows.indexOf(rowIndex) !== -1 ? "selected" : ""} onClick={_this.handleRowClick.bind(_this, rowIndex)} onContextMenu={_this.handleRowContextMenu.bind(_this, rowIndex)}>
+                    {this.state.items.map(function (tableItem, rowIndex) {
+            var children = tableItem.children.map(function (child, childIndex) {
+                return (<tr key={childIndex} style={{
+                    display: _this.state.expandedRows.indexOf(rowIndex) !== -1 ? "" : "none"
+                }}>
+                                        {_this.props.columns.map(function (column, columnIndex) {
+                    var cellWidth = column.width || "auto";
+                    return <td key={columnIndex} style={{
+                        minWidth: cellWidth,
+                        maxWidth: cellWidth
+                    }}>
+                                                    {column.value(child)}
+                                                </td>;
+                })}
+                                    </tr>);
+            });
+            var tr = (<tr key={rowIndex} className={_this.state.selectedRows.indexOf(rowIndex) !== -1 ? "selected" : ""} onClick={_this.handleRowClick.bind(_this, rowIndex)} onContextMenu={_this.handleRowContextMenu.bind(_this, rowIndex)}>
                                     {_this.props.columns.map(function (column, columnIndex) {
                 var cellWidth = column.width || "auto";
                 return <td key={columnIndex} style={{
                     minWidth: cellWidth,
                     maxWidth: cellWidth
                 }}>
-                                                {column.value(item)}
+                                                {columnIndex === 0 && children.length ? <span onClick={_this.handleRowExpand.bind(_this, rowIndex)}>+</span> : null} {column.value(tableItem.entity)}
                                             </td>;
             })}
                                 </tr>);
+            return [tr, children].map(function (row, index) { return row; }); // Haha!!!
         })}
                     </tbody>
                     <tfoot ref="footer">
