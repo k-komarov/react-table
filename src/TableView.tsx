@@ -147,7 +147,7 @@ export class TableView<E> extends React.Component<TableViewProps<E>, any> {
     }
 
     private handleRowExpand(rowIndex: number, e: MouseEvent) {
-        e.stopPropagation();
+        e.stopPropagation(); // not to fire Selection
         const indexInExpandedRows = this.state.expandedRows.indexOf(rowIndex);
         const expandedRows: number[] = indexInExpandedRows !== -1
             ? [
@@ -213,12 +213,7 @@ export class TableView<E> extends React.Component<TableViewProps<E>, any> {
                                     }}>
                                         {
                                             this.props.columns.map((column, columnIndex) => {
-                                                const cellWidth = column.width || "auto";
-                                                return <td key={columnIndex}
-                                                           style={{
-                                                           minWidth: cellWidth,
-                                                           maxWidth: cellWidth
-                                                       }}>
+                                                return <td key={columnIndex}>
                                                     {column.value(child)}
                                                 </td>;
                                             })
@@ -240,7 +235,11 @@ export class TableView<E> extends React.Component<TableViewProps<E>, any> {
                                                            minWidth: cellWidth,
                                                            maxWidth: cellWidth
                                                        }}>
-                                                {columnIndex===0 && children.length ? <span onClick={this.handleRowExpand.bind(this, rowIndex)}>+</span> : null} {column.value(tableItem.entity)}
+                                                {columnIndex === 0 && children.length
+                                                    ? <span onClick={this.handleRowExpand.bind(this, rowIndex)}>+</span>
+                                                    : null
+                                                }
+                                                {column.value(tableItem.entity)}
                                             </td>;
                                         })
                                     }

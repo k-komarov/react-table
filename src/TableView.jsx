@@ -123,7 +123,7 @@ var TableView = (function (_super) {
         });
     };
     TableView.prototype.handleRowExpand = function (rowIndex, e) {
-        e.stopPropagation();
+        e.stopPropagation(); // not to fire Selection
         var indexInExpandedRows = this.state.expandedRows.indexOf(rowIndex);
         var expandedRows = indexInExpandedRows !== -1
             ? this.state.expandedRows.slice(0, indexInExpandedRows).concat(this.state.expandedRows.slice(indexInExpandedRows + 1)) : this.state.expandedRows.concat([rowIndex]);
@@ -176,11 +176,7 @@ var TableView = (function (_super) {
                     display: _this.state.expandedRows.indexOf(rowIndex) !== -1 ? "" : "none"
                 }}>
                                         {_this.props.columns.map(function (column, columnIndex) {
-                    var cellWidth = column.width || "auto";
-                    return <td key={columnIndex} style={{
-                        minWidth: cellWidth,
-                        maxWidth: cellWidth
-                    }}>
+                    return <td key={columnIndex}>
                                                     {column.value(child)}
                                                 </td>;
                 })}
@@ -193,7 +189,10 @@ var TableView = (function (_super) {
                     minWidth: cellWidth,
                     maxWidth: cellWidth
                 }}>
-                                                {columnIndex === 0 && children.length ? <span onClick={_this.handleRowExpand.bind(_this, rowIndex)}>+</span> : null} {column.value(tableItem.entity)}
+                                                {columnIndex === 0 && children.length
+                    ? <span onClick={_this.handleRowExpand.bind(_this, rowIndex)}>+</span>
+                    : null}
+                                                {column.value(tableItem.entity)}
                                             </td>;
             })}
                                 </tr>);
