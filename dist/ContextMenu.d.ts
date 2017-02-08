@@ -7,7 +7,7 @@ export interface ContextMenuProps {
 }
 export declare class ContextMenu extends React.Component<ContextMenuProps, any> {
     constructor(props: ContextMenuProps, context: any);
-    render(): JSX.Element;
+    render(): JSX.JSXElement;
 }
 export interface ContextMenuItemProps {
     className?: string;
@@ -15,5 +15,5 @@ export interface ContextMenuItemProps {
     data?: any;
 }
 export declare class ContextMenuItem extends React.Component<ContextMenuItemProps, any> {
-    render(): JSX.Element;
+    render(): JSX.JSXElement;
 }

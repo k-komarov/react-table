@@ -5,5 +5,5 @@ export interface HeaderCellProps {
     sortDirection?: SortingDirection;
 }
 export declare class HeaderCell extends React.Component<HeaderCellProps, any> {
-    render(): JSX.Element;
+    render(): JSX.JSXElement;
 }

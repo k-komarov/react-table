@@ -17,7 +17,7 @@ class Item {
     }
 }
 const items: Item[] = [];
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 100; i++) {
     items.push(new Item(
         i + "(props: TableViewProps<any>, state: any)",
         +(Math.random() * 100 + 1).toFixed(2),

@@ -2,10 +2,10 @@
   "name": "kk-react-table",
   "version": "1.0.0",
   "description": "React table component",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server",
-    "build": "./node_modules/.bin/webpack --config webpack.config.prod.js --progress --profile --bail",
+    "build": "./node_modules/.bin/webpack --config webpack.config.prod.js -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "kirill.komarov@gmail.com",
@@ -20,12 +20,11 @@
     "source-map-loader": "^0.1.6",
     "style-loader": "^0.13.1",
     "typescript": "^2.1.5",
-    "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0"
   },
   "dependencies": {
     "react": "^15.4.2",
-    "react-dom": "^15.4.2",
-    "react-lazy-render": "^0.3.0"
+    "react-dom": "^15.4.2"
   }
 }

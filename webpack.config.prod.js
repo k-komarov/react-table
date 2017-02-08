@@ -1,9 +1,9 @@
 const webpack = require("webpack");
 module.exports = {
-    entry: "./src/index.tsx",
+    entry: "./example/index.tsx",
     output: {
         filename: "index.js",
-        path: __dirname + "/lib"
+        path: __dirname + "/dist"
     },
 
     devtool: "cheap-module-source-map",
@@ -25,7 +25,6 @@ module.exports = {
             {test: /\.js$/, loader: "source-map-loader"}
         ]
     },
-    target: 'node', // in order to ignore built-in modules like path, fs, etc.
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {

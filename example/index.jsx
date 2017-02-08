@@ -14,7 +14,7 @@ var Item = (function () {
     return Item;
 }());
 var items = [];
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < 100; i++) {
     items.push(new Item(i + "(props: TableViewProps<any>, state: any)", +(Math.random() * 100 + 1).toFixed(2), "const Table = (props: TableViewProps<any>, state: any) => new TableView<any>(props, state);"));
 }
 var tableItems = [];

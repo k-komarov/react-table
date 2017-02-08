@@ -7,7 +7,7 @@
     "target": "es5",
     "jsx": "react",
     "declaration": true,
-    "declarationDir": "./lib/"
+    "declarationDir": "./dist/"
   },
   "include": [
     "./src/**/*"
