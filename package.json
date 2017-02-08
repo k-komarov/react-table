@@ -1,8 +1,9 @@
 {
   "name": "kk-react-table",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "React table component",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server",
     "build": "./node_modules/.bin/webpack --config webpack.config.prod.js -p",
